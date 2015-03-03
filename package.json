@@ -1,0 +1,30 @@
+{
+  "name": "chatviewer",
+  "version": "0.1.0",
+  "description": "ChatViewer: Show transcripts in a useful way",
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "6to5ify": "^4.1.1",
+    "browserify": "^9.0.3",
+    "gulp": "^3.8.7",
+    "gulp-connect": "^2.2.0",
+    "gulp-sass": "^1.3.3",
+    "gulp-util": "^3.0.4",
+    "reactify": "^1.0.0",
+    "require-dir": "^0.1.0",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.0.0",
+    "watchify": "^2.4.0"
+  },
+  "scripts": {
+    "start": "gulp",
+    "build": "gulp build"
+  },
+  "dependencies": {
+    "flux": "^2.0.1",
+    "object-assign": "^2.0.0",
+    "react": "^0.12.2",
+    "react-bootstrap": "^0.16.0"
+  }
+}
