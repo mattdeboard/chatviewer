@@ -7,11 +7,9 @@ const TopicPalette = require('./topic_palette.jsx');
 const App = React.createClass({
   render: function() {
     return (
-      <div className="app">
+      <div className="app container">
         <Header />
         <SearchBox />
-        <TopicPalette />
-        <DiscussionDisplay />
       </div>
     );
   }
