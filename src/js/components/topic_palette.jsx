@@ -21,9 +21,9 @@ const TopicPalette = React.createClass({
       return this.handleClick(e);
     }
   },
-  
+
   renderTopicLinks: function() {
-    return _.range(this.props.numTopics).map(function(i, idx, this) {
+    return _.range(this.props.numTopics).map(function(i, idx) {
       return (
         <button className="btn btn-default"
                 tabIndex={i + 1}
@@ -34,7 +34,7 @@ const TopicPalette = React.createClass({
           Topic {i}
         </button>
       );
-    })
+    }, this);
   },
 
   render: function() {

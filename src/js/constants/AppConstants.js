@@ -11,6 +11,8 @@ module.exports = {
   ActionSources: keyMirror({
     SERVER_ACTION: null,
     VIEW_ACTION: null
-  })
+  }),
+
+  FIREBASE_URL: "https://interview-bolster.firebaseio.com/"
 
 };
