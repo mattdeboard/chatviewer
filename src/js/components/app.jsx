@@ -7,9 +7,15 @@ const ParticipantStore = require('../stores/ParticipantStore');
 const TopicStore = require('../stores/TopicStore');
 const Firebase = require('firebase');
 const Constants = require('../constants/AppConstants');
+const Router = require('react-router');
+const _ = require('underscore');
 const {addTopic, addParticipant} = require('../actions/DataActionCreators');
 
 const App = React.createClass({
+  mixins: [
+    Router.State
+  ],
+
   statics: {
     fetchData: function() {
       const storeTypes = {
@@ -58,12 +64,21 @@ const App = React.createClass({
   },
 
   render: function() {
+    // If the app is being entered from a /topic/ route, then we want to only
+    // include the topic specified in the URL.
+    const topicID = this.getParams().topicID;
+    if (!!topicID) {
+      var topics = _.pick(this.state.topics, topicID);
+    } else {
+      var topics = this.state.topics;
+    };
+
     return (
       <div className="app container">
         <Header />
         <SearchBox />
-        <TopicPalette topics={this.state.topics} />
-        <DiscussionDisplay topics={this.state.topics}
+        <TopicPalette topics={topics} />
+        <DiscussionDisplay topics={topics}
                            participants={this.state.participants} />
       </div>
     );
