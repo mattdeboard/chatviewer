@@ -18,4 +18,17 @@ module.exports = {
       participant: participant
     });
   },
+
+  searchNotes: function(query) {
+    AppDispatcher.handleViewAction({
+      type: Constants.ActionTypes.SEARCH,
+      query: query
+    });
+  },
+
+  clearSearch: function() {
+    AppDispatcher.handleViewAction({
+      type: Constants.ActionTypes.CLEAR_SEARCH
+    });
+  },
 };

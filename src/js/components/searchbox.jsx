@@ -1,4 +1,5 @@
 const React = require('react');
+const {searchNotes, clearSearch} = require('../actions/DataActionCreators');
 
 const SearchBox = React.createClass({
   propTypes: {
@@ -12,12 +13,18 @@ const SearchBox = React.createClass({
   },
 
   handleChange: function (e) {
-    this.setState({searchText: e.target.value});
+    const query = e.target.value;
+    this.setState({searchText: query});
+    if (query.length >= 2) {
+      searchNotes(query);
+    } else {
+      clearSearch();
+    }
   },
 
   handleFormSubmit: function (e) {
     e.preventDefault();
-    this.props.onSearchBoxSubmit(this.state.searchText);
+    e.stopPropagation();
   },
 
   renderForm: function () {

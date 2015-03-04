@@ -35,16 +35,22 @@ const App = React.createClass({
 
   componentWillMount: function() {
     TopicStore.addChangeListener(this.handleTopicChange);
+    TopicStore.addSearchListener(this.handleSearchResults);
     ParticipantStore.addChangeListener(this.handleParticipantChange);
   },
 
   componentWillUnmount: function() {
     TopicStore.removeChangeListener(this.handleTopicChange);
+    TopicStore.removeSearchListener(this.handleSearchResults);
     ParticipantStore.removeChangeListener(this.handleParticipantChange);
   },
 
   handleTopicChange: function() {
     this.setState({topics: TopicStore.getAll()});
+  },
+
+  handleSearchResults: function() {
+    this.setState({topics: TopicStore.getSearchResults()});
   },
 
   handleParticipantChange: function() {
