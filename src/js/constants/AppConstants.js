@@ -5,7 +5,8 @@ module.exports = {
   CHANGE_EVENT: 'change',
 
   ActionTypes: keyMirror({
-    ADD_TASK: null
+    ADD_TOPIC: null,
+    ADD_PARTICIPANT: null
   }),
 
   ActionSources: keyMirror({

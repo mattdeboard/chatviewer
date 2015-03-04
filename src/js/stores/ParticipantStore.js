@@ -1,25 +1,25 @@
-var AppDispatcher = require('../dispatchers/AppDispatcher');
-var EventEmitter = require('events').EventEmitter;
-var Constants = require('../constants/AppConstants');
-var assign = require('object-assign');
+const AppDispatcher = require('../dispatchers/AppDispatcher');
+const EventEmitter = require('events').EventEmitter;
+const Constants = require('../constants/AppConstants');
+const assign = require('object-assign');
 
 // data storage
-var _data = [];
+var storage = {}
 
-// add private functions to modify data
-function addItem(title, completed=false) {
-  _data.push({title, completed});
+var storeParticipant = function(id, data) {
+  storage[id] = data;
 }
 
-var ParticipantStore = assign(EventEmitter.prototype, {
+const ParticipantStore = assign({}, EventEmitter.prototype, {
 
   // public methods used by Controller-View to operate on data
   getAll: function() {
-    return {
-      tasks: _data
-    };
+    return storage;
   },
 
+  getForID: function(id) {
+    return storage[id];
+  },
 
   // Allow Controller-View to register itself with store
   addChangeListener: function(callback) {
@@ -33,24 +33,15 @@ var ParticipantStore = assign(EventEmitter.prototype, {
     this.emit(Constants.CHANGE_EVENT);
   },
 
-
   // register store with dispatcher, allowing actions to flow through
   dispatcherIndex: AppDispatcher.register(function(payload) {
-    var action = payload.action;
+    const action = payload.action;
 
     switch(action.type) {
-      case Constants.ActionTypes.ADD_TASK:
-        var text = action.text.trim();
-        // NOTE: if this action needs to wait on another store:
-        // ParticipantStore.waitFor([OtherStore.dispatchToken]);
-        // For details, see: http://facebook.github.io/react/blog/2014/07/30/flux-actions-and-the-dispatcher.html#why-we-need-a-dispatcher
-        if (text !== '') {
-          addItem(text);
-          ParticipantStore.emitChange();
-        }
+      case Constants.ActionTypes.ADD_PARTICIPANT:
+        storeParticipant(action.id, action.participant);
+        ParticipantStore.emitChange();
         break;
-
-      // add more cases for other actionTypes...
     }
   })
 

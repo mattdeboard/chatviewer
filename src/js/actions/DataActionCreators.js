@@ -3,19 +3,19 @@ var Constants = require('../constants/AppConstants');
 
 module.exports = {
 
-  addItem: function(text) {
-    AppDispatcher.handleViewAction({
-      type: Constants.ActionTypes.ADD_TASK,
-      text: text
+  addTopic: function(name, discussion) {
+    AppDispatcher.handleServerAction({
+      type: Constants.ActionTypes.ADD_TOPIC,
+      name: name,
+      discussion: discussion
     });
   },
 
-  clearList: function() {
-    console.warn('clearList action not yet implemented...');
+  addParticipant: function(id, participant) {
+    AppDispatcher.handleServerAction({
+      type: Constants.ActionTypes.ADD_PARTICIPANT,
+      id: id,
+      participant: participant
+    });
   },
-
-  completeTask: function(task) {
-    console.warn('completeTask action not yet implemented...');
-  }
-
 };
