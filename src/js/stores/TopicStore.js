@@ -5,8 +5,9 @@ const assign = require('object-assign');
 
 var storage = {};
 
-const storeTopic = function(name, discussion) {
-  storage[name] = discussion;
+const storeTopic = function(id, topic) {
+  console.log(topic);
+  storage[id] = topic;
 }
 
 const TopicStore = assign({}, EventEmitter.prototype, {
@@ -14,8 +15,8 @@ const TopicStore = assign({}, EventEmitter.prototype, {
     return storage;
   },
 
-  getTopicByName: function(name) {
-    return storage[name];
+  getTopicById: function(id) {
+    return storage[id];
   },
 
   // Allow Controller-View to register itself with store
@@ -35,7 +36,7 @@ const TopicStore = assign({}, EventEmitter.prototype, {
 
     switch(action.type) {
       case Constants.ActionTypes.ADD_TOPIC:
-        storeTopic(action.name, action.discussion);
+        storeTopic(action.id, action.topic);
         TopicStore.emitChange();
         break;
     };

@@ -3,11 +3,11 @@ var Constants = require('../constants/AppConstants');
 
 module.exports = {
 
-  addTopic: function(name, discussion) {
+  addTopic: function(id, topic) {
     AppDispatcher.handleServerAction({
       type: Constants.ActionTypes.ADD_TOPIC,
-      name: name,
-      discussion: discussion
+      id: id,
+      topic: topic
     });
   },
 
