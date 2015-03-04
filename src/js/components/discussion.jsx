@@ -9,10 +9,13 @@ const Quote = React.createClass({
   render: function() {
     return (
       <div className="quote row">
-        <div className="col-xs-3 panel panel-body">
-          <img src={this.props.avatarUrl} />
+        <div className="col-xs-2">
+          <img src={this.props.avatarUrl}
+               width={125}
+               height={125}
+               className="center panel panel-body" />
         </div>
-        <div className="col-xs-9 panel panel-body">
+        <div className="col-xs-10">
           <p>
             {this.props.quoteText}
           </p>

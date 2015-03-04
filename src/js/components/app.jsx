@@ -52,7 +52,6 @@ const App = React.createClass({
   },
 
   render: function() {
-    console.log(this.state.topics);
     return (
       <div className="app container">
         <Header />
