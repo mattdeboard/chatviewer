@@ -2,12 +2,31 @@ const AppDispatcher = require('../dispatchers/AppDispatcher');
 const EventEmitter = require('events').EventEmitter;
 const Constants = require('../constants/AppConstants');
 const assign = require('object-assign');
+const lunr = require('lunr');
 
 var storage = {};
 
 const storeTopic = function(id, topic) {
   storage[id] = topic;
 }
+
+const searchIndex = lunr(function () {
+  this.field("text")
+  this.field("speaker")
+  this.field("topicID")
+  this.ref("id", false)
+});
+
+const addTopicToIndex = function(id, topic) {
+  topic.discussion.map(function(note, idx) {
+    searchIndex.add({
+      text: note.text,
+      speaker: note.speaker,
+      topicID: id,
+      id: id + "::" + idx
+    });
+  });
+};
 
 const TopicStore = assign({}, EventEmitter.prototype, {
   getAll: function() {
@@ -36,6 +55,7 @@ const TopicStore = assign({}, EventEmitter.prototype, {
     switch(action.type) {
       case Constants.ActionTypes.ADD_TOPIC:
         storeTopic(action.id, action.topic);
+        addTopicToIndex(action.id, action.topic);
         TopicStore.emitChange();
         break;
     };
