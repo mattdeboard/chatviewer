@@ -57,11 +57,6 @@ const SearchBox = React.createClass({
                  onChange={this.handleChange}
                  tabIndex="1" />
 
-          <button type="submit" tabIndex="-1">
-            <i className="fa fa-search">
-              <span className="aural">Submit</span>
-            </i>
-          </button>
         </fieldset>
       </form>
     );

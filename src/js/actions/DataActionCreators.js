@@ -31,4 +31,12 @@ module.exports = {
       type: Constants.ActionTypes.CLEAR_SEARCH
     });
   },
+
+  setFetchedTopic: function(id, topicName) {
+    AppDispatcher.handleServerAction({
+      type: Constants.ActionTypes.FETCH_TOPIC,
+      id: id,
+      topicName: topicName
+    });
+  }
 };
