@@ -24,5 +24,11 @@ module.exports = {
       type: Constants.ActionTypes.SEARCH,
       query: query
     });
-  }
+  },
+
+  clearSearch: function() {
+    AppDispatcher.handleViewAction({
+      type: Constants.ActionTypes.CLEAR_SEARCH
+    });
+  },
 };
