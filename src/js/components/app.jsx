@@ -44,7 +44,7 @@ const App = React.createClass({
         let child = new Firebase(Constants.FIREBASE_URL).child(store);
         let handler = storeTypes[store];
 
-        if (topicID) {
+        if (topicID && store === "topics") {
           child = child.orderByKey().startAt(topicID);
         }
         child.on("child_added", function(childSnapshot, prevChildName) {
