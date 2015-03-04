@@ -1,24 +1,11 @@
 const React = require('react');
 const _ = require('underscore');
+const {flattenTopics} = require('./utils');
 const TopicStore = require('../stores/TopicStore');
 
 const TopicPalette = React.createClass({
   propTypes: {
     topics: React.PropTypes.object
-  },
-
-  transformTopics: function() {
-    var topics = [];
-
-    for (let key in this.props.topics) {
-      let topic = this.props.topics[key];
-      topics.push({
-        id: key,
-        discussion: topic.discussion,
-        name: topic.name
-      });
-    }
-    return topics;
   },
 
   handleClick: function(e) {
@@ -32,7 +19,7 @@ const TopicPalette = React.createClass({
   },
 
   renderTopicLinks: function() {
-    const topics = this.transformTopics();
+    const topics = flattenTopics(this.props.topics);
     return topics.map(function(topic, idx) {
       return (
         <button className="btn btn-default"

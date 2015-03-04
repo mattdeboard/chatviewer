@@ -8,12 +8,16 @@ const Quote = React.createClass({
 
   render: function() {
     return (
-      <span className="quote">
-        <img src={this.props.avatarUrl} />
-        <p>
-          {this.props.quoteText}
-        </p>
-      </span>
+      <div className="quote row">
+        <div className="col-xs-3 panel panel-body">
+          <img src={this.props.avatarUrl} />
+        </div>
+        <div className="col-xs-9 panel panel-body">
+          <p>
+            {this.props.quoteText}
+          </p>
+        </div>
+      </div>
     );
   }
 });
@@ -22,26 +26,27 @@ const Quote = React.createClass({
 //  topic.
 const Discussion = React.createClass({
   propTypes: {
-    quotes: React.PropTypes.arrayOf({
+    quotes: React.PropTypes.arrayOf(
       React.PropTypes.shape({
         text: React.PropTypes.string,
         speaker: React.PropTypes.number
       })
-    })
+    ),
+    participants: React.PropTypes.object,
   },
 
-  getAvatarFromStore: function(speakerId) {
-    return "";
-  }
+  getAvatarForParticipantID: function(id) {
+    return this.props.participants[id.toString()].avatar;
+  },
 
   renderQuotes: function() {
     return this.props.quotes.map(function(quote) {
       return (
-        <Quote avatarUrl={this.getAvatarFromStore(quote.speaker)}
+        <Quote avatarUrl={this.getAvatarForParticipantID(quote.speaker)}
                quoteText={quote.text} />
       );
-    });
-  }
+    }, this);
+  },
 
   render: function() {
     return (
