@@ -22,14 +22,13 @@ const TopicPalette = React.createClass({
     const topics = flattenTopics(this.props.topics);
     return topics.map(function(topic, idx) {
       return (
-        <button className="btn btn-default"
-                tabIndex={idx + 1}
-                key={"topic-" + topic.name}
-                onClick={this.handleClick}
-                onKeyUp={this.handleKeyPress}
-                onKeyDown={this.handleKeyPress}>
+        <a href={"#/topic/" + idx}
+           className="btn btn-default"
+           tabIndex={idx + 1}
+           key={"topic-" + topic.name}
+           role="link">
           {topic.name}
-        </button>
+        </a>
       );
     }, this);
   },
