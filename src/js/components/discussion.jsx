@@ -39,11 +39,20 @@ const Discussion = React.createClass({
   },
 
   getAvatarForParticipantID: function(id) {
-    return this.props.participants[id.toString()].avatar;
+    const participant = this.props.participants[id.toString()];
+    if (!participant) {
+      return null;
+    } else {
+      return participant.avatar;
+    }
   },
 
   renderQuotes: function() {
     return this.props.quotes.map(function(quote) {
+      var avatar = this.getAvatarForParticipantID(quote.speaker);
+      if (!avatar) {
+        return false
+      };
       return (
         <Quote avatarUrl={this.getAvatarForParticipantID(quote.speaker)}
                quoteText={quote.text} />

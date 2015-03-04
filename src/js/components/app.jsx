@@ -22,6 +22,12 @@ const setStateFromFetched = function(props) {
   setFetchedTopic(props.topicID, topicName);
 };
 
+const handler = function(func) {
+  return function (childSnapshot, prevChildName) {
+    func(childSnapshot.key(), childSnapshot.val());
+  };
+};
+
 const App = React.createClass({
   propTypes: {
     topicID: React.PropTypes.oneOfType([
@@ -35,29 +41,31 @@ const App = React.createClass({
   ],
 
   statics: {
-    fetchData: function(topicID) {
-      const storeTypes = {
-        participants: addParticipant,
-        topics: addTopic,
-      }
-      for (let store in storeTypes) {
-        let child = new Firebase(Constants.FIREBASE_URL).child(store);
-        let handler = storeTypes[store];
+    fetchTopics: function(topicID) {
+      var topics = new Firebase(Constants.FIREBASE_URL).child("topics");
 
-        if (topicID && store === "topics") {
-          child = child.orderByKey().startAt(topicID);
-        }
-        child.on("child_added", function(childSnapshot, prevChildName) {
-          handler(childSnapshot.key(), childSnapshot.val());
-        });
-      }
+      if (topicID) {
+        topics = topics.orderByKey().equalTo(topicID);
+        var callback = handler(setFetchedTopic);
+      } else {
+        var callback = handler(addTopic);
+      };
+
+      topics.on("child_added", callback);
+    },
+
+    fetchParticipants: function() {
+      var participants = new Firebase(Constants.FIREBASE_URL)
+        .child("participants");
+      participants.on("child_added", handler(addParticipant));
     },
   },
 
   getInitialState: function() {
     return {
       topics: {},
-      participants: {}
+      participants: {},
+      fullRetrievalComplete: false,
     };
   },
 
@@ -79,7 +87,11 @@ const App = React.createClass({
 
     */
     if (!nextProps.topicID) {
-      this.setState({topics: TopicStore.getAll()});
+      if (!this.state.fullRetrievalComplete) {
+        App.fetchTopics();
+      } else {
+        this.setState({topics: TopicStore.getAll()});
+      }
     } else {
       setStateFromFetched(nextProps);
     }
@@ -87,10 +99,12 @@ const App = React.createClass({
 
   componentWillMount: function() {
     if (!this.props.topicID) {
-      App.fetchData();
+      App.fetchTopics();
     } else {
       setStateFromFetched(this.props);
     };
+    App.fetchParticipants();
+
     TopicStore.addChangeListener(this.handleTopicChange);
     TopicStore.addSearchListener(this.handleSearchResults);
     TopicStore.addFetchListener(this.handleFetchResults);
@@ -105,7 +119,7 @@ const App = React.createClass({
   },
 
   handleTopicChange: function() {
-    this.setState({topics: TopicStore.getAll()});
+    this.setState({topics: TopicStore.getAll(), fullRetrievalComplete: true});
   },
 
   handleSearchResults: function() {
@@ -126,7 +140,7 @@ const App = React.createClass({
         <Header />
         <SearchBox />
         <TopicPalette topics={this.state.topics}
-                      selectedTopic={!!this.props.topicID}/>
+                      selectedTopic={!!this.props.topicID} />
         <DiscussionDisplay topics={this.state.topics}
                            participants={this.state.participants} />
       </div>
