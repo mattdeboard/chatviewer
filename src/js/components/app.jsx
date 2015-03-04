@@ -49,7 +49,7 @@ const App = React.createClass({
 
   handleParticipantChange: function() {
     this.setState({participants: ParticipantStore.getAll()})
-  }
+  },
 
   render: function() {
     console.log(this.state.topics);
