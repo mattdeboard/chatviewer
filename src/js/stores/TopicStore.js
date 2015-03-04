@@ -6,7 +6,6 @@ const assign = require('object-assign');
 var storage = {};
 
 const storeTopic = function(id, topic) {
-  console.log(topic);
   storage[id] = topic;
 }
 

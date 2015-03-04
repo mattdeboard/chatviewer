@@ -26,11 +26,40 @@ const App = React.createClass({
     },
   },
 
+  getInitialState: function() {
+    return {
+      topics: {},
+      participants: {}
+    };
+  },
+
+  componentWillMount: function() {
+    TopicStore.addChangeListener(this.handleTopicChange);
+    ParticipantStore.addChangeListener(this.handleParticipantChange);
+  },
+
+  componentWillUnmount: function() {
+    TopicStore.removeChangeListener(this.handleTopicChange);
+    ParticipantStore.removeChangeListener(this.handleParticipantChange);
+  },
+
+  handleTopicChange: function() {
+    this.setState({topics: TopicStore.getAll()});
+  },
+
+  handleParticipantChange: function() {
+    this.setState({participants: ParticipantStore.getAll()})
+  }
+
   render: function() {
+    console.log(this.state.topics);
     return (
       <div className="app container">
         <Header />
         <SearchBox />
+        <TopicPalette topics={this.state.topics} />
+        <DiscussionDisplay topics={this.state.topics}
+                           participants={this.state.participants} />
       </div>
     );
   }

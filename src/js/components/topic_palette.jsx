@@ -1,15 +1,24 @@
 const React = require('react');
 const _ = require('underscore');
+const TopicStore = require('../stores/TopicStore');
 
 const TopicPalette = React.createClass({
   propTypes: {
-    numTopics: React.PropTypes.number
+    topics: React.PropTypes.object
   },
 
-  getInitialState: function() {
-    return {
-      hidden: []
-    };
+  transformTopics: function() {
+    var topics = [];
+
+    for (let key in this.props.topics) {
+      let topic = this.props.topics[key];
+      topics.push({
+        id: key,
+        discussion: topic.discussion,
+        name: topic.name
+      });
+    }
+    return topics;
   },
 
   handleClick: function(e) {
@@ -23,15 +32,16 @@ const TopicPalette = React.createClass({
   },
 
   renderTopicLinks: function() {
-    return _.range(this.props.numTopics).map(function(i, idx) {
+    const topics = this.transformTopics();
+    return topics.map(function(topic, idx) {
       return (
         <button className="btn btn-default"
-                tabIndex={i + 1}
-                key={"topic-link-button-" + i}
+                tabIndex={idx + 1}
+                key={"topic-" + topic.name}
                 onClick={this.handleClick}
                 onKeyUp={this.handleKeyPress}
                 onKeyDown={this.handleKeyPress}>
-          Topic {i}
+          {topic.name}
         </button>
       );
     }, this);
