@@ -8,7 +8,8 @@ module.exports = {
     ADD_TOPIC: null,
     ADD_PARTICIPANT: null,
     SEARCH: null,
-    CLEAR_SEARCH: null
+    CLEAR_SEARCH: null,
+    FETCH_TOPIC: null
   }),
 
   ActionSources: keyMirror({

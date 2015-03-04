@@ -4,10 +4,12 @@ const Constants = require('../constants/AppConstants');
 const assign = require('object-assign');
 const lunr = require('lunr');
 const _ = require('underscore');
+const Firebase = require('firebase');
 
 var storage = {
   all: {},
-  searchResults: {}
+  searchResults: {},
+  fetched: {}
 };
 
 const storeTopic = function(id, topic) {
@@ -58,8 +60,11 @@ const replaceSearchResults = function(results) {
   storage.searchResults = results;
 };
 
-window.searchNotes = searchNotes;
-window.appStorage = storage;
+const replaceFetched = function(id, topic) {
+  storage.fetched = {
+    [ id ]: topic
+  };
+};
 
 const TopicStore = assign({}, EventEmitter.prototype, {
   getAll: function() {
@@ -67,11 +72,15 @@ const TopicStore = assign({}, EventEmitter.prototype, {
   },
 
   getTopicById: function(id) {
-    return storage.all[id];
+    return storage.all[id] || null;
   },
 
   getSearchResults: function() {
     return _.extend({}, storage.searchResults);
+  },
+
+  getFetchedTopic: function() {
+    return _.extend({}, storage.fetched);
   },
 
   // Allow Controller-View to register itself with store
@@ -98,6 +107,14 @@ const TopicStore = assign({}, EventEmitter.prototype, {
     this.emit("search");
   },
 
+  addFetchListener: function(callback) {
+    this.on("fetch", callback);
+  },
+
+  removeFetchListener: function(callback) {
+    this.removeListener("fetch", callback);
+  },
+
   dispatcherIndex: AppDispatcher.register(function(payload) {
     const action = payload.action;
 
@@ -115,6 +132,22 @@ const TopicStore = assign({}, EventEmitter.prototype, {
       case Constants.ActionTypes.CLEAR_SEARCH:
         replaceSearchResults({});
         TopicStore.emitChange();
+        break;
+      case Constants.ActionTypes.FETCH_TOPIC:
+        var topics = new Firebase(Constants.FIREBASE_URL).child("topics");
+        if (action.topicName) {
+          topics = topics.orderByChild("name").equalTo(action.topicName);
+        } else {
+          topics = topics.orderByKey().equalTo(action.id);
+        };
+
+        topics.on("child_added", function(childSnapshot, prevChildName) {
+            const key = childSnapshot.key();
+            const val = childSnapshot.val();
+            replaceFetched(key, val);
+            TopicStore.emit('fetch');;
+          });
+        break;
     };
   })
 });
