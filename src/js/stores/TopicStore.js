@@ -3,6 +3,7 @@ const EventEmitter = require('events').EventEmitter;
 const Constants = require('../constants/AppConstants');
 const assign = require('object-assign');
 const lunr = require('lunr');
+const _ = require('underscore');
 
 var storage = {};
 
@@ -23,10 +24,33 @@ const addTopicToIndex = function(id, topic) {
       text: note.text,
       speaker: note.speaker,
       topicID: id,
-      id: id + "::" + idx
+      id: JSON.stringify({index: idx, topicID: id})
     });
   });
 };
+
+const searchNotes = function(query) {
+  const results = searchIndex.search(query);
+  let resultsByTopic = {};
+
+  for (let result of results) {
+    let note = JSON.parse(result.ref);
+    let topic = TopicStore.getTopicById(note.topicID);
+
+    if (_.has(resultsByTopic, note.topicID)) {
+      resultsByTopic[note.topicID].discussion
+        .push(topic.discussion[note.index]);
+    } else {
+      resultsByTopic[note.topicID] = {
+        discussion: [topic.discussion[note.index]]
+      }
+    };
+  }
+
+  return resultsByTopic;
+};
+
+window.searchNotes = searchNotes;
 
 const TopicStore = assign({}, EventEmitter.prototype, {
   getAll: function() {
@@ -58,6 +82,10 @@ const TopicStore = assign({}, EventEmitter.prototype, {
         addTopicToIndex(action.id, action.topic);
         TopicStore.emitChange();
         break;
+      case Constants.ActionTypes.SEARCH:
+        const results = searchNotes(action.query);
+
+
     };
   })
 });

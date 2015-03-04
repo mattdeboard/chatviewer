@@ -6,7 +6,8 @@ module.exports = {
 
   ActionTypes: keyMirror({
     ADD_TOPIC: null,
-    ADD_PARTICIPANT: null
+    ADD_PARTICIPANT: null,
+    SEARCH: null
   }),
 
   ActionSources: keyMirror({
