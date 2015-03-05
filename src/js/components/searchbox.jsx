@@ -1,10 +1,15 @@
 const React = require('react');
+const Router = require('react-router');
 const {searchNotes, clearSearch} = require('../actions/DataActionCreators');
 
 const SearchBox = React.createClass({
   propTypes: {
     onSearchBoxSubmit: React.PropTypes.func
   },
+
+  mixins: [
+    Router.State
+  ],
 
   getInitialState: function () {
     return {
@@ -16,7 +21,7 @@ const SearchBox = React.createClass({
     const query = e.target.value;
     this.setState({searchText: query});
     if (query.length >= 2) {
-      searchNotes(query);
+      searchNotes(this.getParams().topicID || null, query);
     } else {
       clearSearch();
     }

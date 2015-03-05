@@ -19,9 +19,10 @@ module.exports = {
     });
   },
 
-  searchNotes: function(query) {
+  searchNotes: function(topicID, query) {
     AppDispatcher.handleViewAction({
       type: Constants.ActionTypes.SEARCH,
+      id: topicID,
       query: query
     });
   },
