@@ -41,6 +41,11 @@ const App = React.createClass({
   ],
 
   statics: {
+    fetchData: function(topicID) {
+      App.fetchTopics(topicID);
+      App.fetchParticipants();
+    },
+
     fetchTopics: function(topicID) {
       var topics = new Firebase(Constants.FIREBASE_URL).child("topics");
 
@@ -99,7 +104,7 @@ const App = React.createClass({
 
   componentWillMount: function() {
     if (!this.props.topicID) {
-      App.fetchTopics();
+      App.fetchData();
     } else {
       setStateFromFetched(this.props);
     };
