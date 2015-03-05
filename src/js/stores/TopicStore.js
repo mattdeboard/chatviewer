@@ -34,7 +34,7 @@ const addTopicToIndex = function(id, topic) {
   });
 };
 
-const searchNotes = function(query) {
+const searchNotes = function(topicID, query) {
   const results = searchIndex.search(query);
   let resultsByTopic = {};
 
@@ -53,7 +53,11 @@ const searchNotes = function(query) {
     };
   }
 
-  return resultsByTopic;
+  if (topicID) {
+    return _.pick(resultsByTopic, topicID);
+  } else {
+    return resultsByTopic;
+  }
 };
 
 const replaceSearchResults = function(results) {
@@ -125,7 +129,7 @@ const TopicStore = assign({}, EventEmitter.prototype, {
         TopicStore.emitChange();
         break;
       case Constants.ActionTypes.SEARCH:
-        const results = searchNotes(action.query);
+        const results = searchNotes(action.id, action.query);
         replaceSearchResults(results);
         TopicStore.emitSearch();
         break;
