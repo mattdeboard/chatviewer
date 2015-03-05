@@ -22,7 +22,7 @@ const setStateFromFetched = function(props) {
   setFetchedTopic(props.topicID, topicName);
 };
 
-const handler = function(func) {
+const createOnChildAddedHandler = function(func) {
   return function (childSnapshot, prevChildName) {
     func(childSnapshot.key(), childSnapshot.val());
   };
@@ -46,18 +46,18 @@ const App = React.createClass({
 
       if (topicID) {
         topics = topics.orderByKey().equalTo(topicID);
-        var callback = handler(setFetchedTopic);
+        var onChildAddedHandler = createOnChildAddedHandler(setFetchedTopic);
       } else {
-        var callback = handler(addTopic);
+        var onChildAddedHandler = createOnChildAddedHandler(addTopic);
       };
 
-      topics.on("child_added", callback);
+      topics.on("child_added", onChildAddedHandler);
     },
 
     fetchParticipants: function() {
       var participants = new Firebase(Constants.FIREBASE_URL)
         .child("participants");
-      participants.on("child_added", handler(addParticipant));
+      participants.on("child_added", createOnChildAddedHandler(addParticipant));
     },
   },
 
