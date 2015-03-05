@@ -32,11 +32,10 @@ module.exports = {
     });
   },
 
-  setFetchedTopic: function(id, topicName) {
+  setFetchedTopic: function(id) {
     AppDispatcher.handleServerAction({
       type: Constants.ActionTypes.FETCH_TOPIC,
-      id: id,
-      topicName: topicName
+      id: id
     });
   }
 };
