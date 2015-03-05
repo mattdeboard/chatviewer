@@ -12,16 +12,6 @@ const _ = require('underscore');
 const {addTopic, addParticipant, setFetchedTopic} =
   require('../actions/DataActionCreators');
 
-const setStateFromFetched = function(props) {
-  const topic = TopicStore.getTopicById(props.topicID);
-  if (topic) {
-    var topicName = topic.name;
-  } else {
-    var topicName = null;
-  }
-  setFetchedTopic(props.topicID, topicName);
-};
-
 const createOnChildAddedHandler = function(func) {
   return function (childSnapshot, prevChildName) {
     func(childSnapshot.key(), childSnapshot.val());
@@ -41,23 +31,25 @@ const App = React.createClass({
   ],
 
   statics: {
+    fetchData: function(topicID) {
+      App.fetchTopics(topicID);
+      App.fetchParticipants();
+    },
+
     fetchTopics: function(topicID) {
       var topics = new Firebase(Constants.FIREBASE_URL).child("topics");
+      topics.on("child_added", createOnChildAddedHandler(addTopic));
 
       if (topicID) {
-        topics = topics.orderByKey().equalTo(topicID);
-        var onChildAddedHandler = createOnChildAddedHandler(setFetchedTopic);
-      } else {
-        var onChildAddedHandler = createOnChildAddedHandler(addTopic);
+        topics.orderByKey().equalTo(topicID)
+          .on("child_added", createOnChildAddedHandler(setFetchedTopic));
       };
-
-      topics.on("child_added", onChildAddedHandler);
     },
 
     fetchParticipants: function() {
       var participants = new Firebase(Constants.FIREBASE_URL)
-        .child("participants");
-      participants.on("child_added", createOnChildAddedHandler(addParticipant));
+        .child("participants")
+        .on("child_added", createOnChildAddedHandler(addParticipant));
     },
   },
 
@@ -70,41 +62,17 @@ const App = React.createClass({
   },
 
   componentWillReceiveProps: function(nextProps) {
-    /**
-      After the initial rendering, when this component receives properties,
-      there are two possible results:
-
-        1. `this.props.topicID` is false. In this case, we are looking at the
-           root route. We can just pull the topics from the store.
-
-        2. `this.props.topicID` is a numeric string. In this case, the user has
-           selected a particular topic to view. Since one of the conditions in
-           this exercise is that we must contact Firebase for this, the
-           "fluxiest" way to do this is for the view to generate an action.
-           The dispatcher dispatches this action to the stores. In this case,
-           the action is handled by TopicStore. TopicStore then uses the
-           Firebase library to query the data store.
-
-    */
-    if (!nextProps.topicID) {
-      if (!this.state.fullRetrievalComplete) {
-        App.fetchTopics();
-      } else {
-        this.setState({topics: TopicStore.getAll()});
-      }
+    // If and only if we already have all data stored AND we're not trying to
+    // get to a view for a particular topic do we just setState from TopicStore.
+    if (this.state.fullRetrievalComplete && !nextProps.topicID) {
+      this.setState({topics: TopicStore.getAll()});
     } else {
-      setStateFromFetched(nextProps);
-    }
+      App.fetchTopics(nextProps.topicID);
+    };
   },
 
   componentWillMount: function() {
-    if (!this.props.topicID) {
-      App.fetchTopics();
-    } else {
-      setStateFromFetched(this.props);
-    };
-    App.fetchParticipants();
-
+    App.fetchData(this.props.topicID);
     TopicStore.addChangeListener(this.handleTopicChange);
     TopicStore.addSearchListener(this.handleSearchResults);
     TopicStore.addFetchListener(this.handleFetchResults);

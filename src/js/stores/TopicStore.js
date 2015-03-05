@@ -134,14 +134,10 @@ const TopicStore = assign({}, EventEmitter.prototype, {
         TopicStore.emitChange();
         break;
       case Constants.ActionTypes.FETCH_TOPIC:
-        var topics = new Firebase(Constants.FIREBASE_URL).child("topics");
-        if (action.topicName) {
-          topics = topics.orderByChild("name").equalTo(action.topicName);
-        } else {
-          topics = topics.orderByKey().equalTo(action.id);
-        };
-
-        topics.on("child_added", function(childSnapshot, prevChildName) {
+        var topics = new Firebase(Constants.FIREBASE_URL).child("topics")
+          .orderByKey()
+          .equalTo(action.id)
+          .on("child_added", function(childSnapshot, prevChildName) {
             const key = childSnapshot.key();
             const val = childSnapshot.val();
             replaceFetched(key, val);
