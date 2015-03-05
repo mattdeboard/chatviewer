@@ -38,14 +38,12 @@ const App = React.createClass({
 
     fetchTopics: function(topicID) {
       var topics = new Firebase(Constants.FIREBASE_URL).child("topics");
-      if (topicID) {
-        topics = topics.orderByKey().equalTo(topicID);
-        var onChildAddedHandler = createOnChildAddedHandler(setFetchedTopic);
-      } else {
-        var onChildAddedHandler = createOnChildAddedHandler(addTopic);
-      };
+      topics.on("child_added", createOnChildAddedHandler(addTopic));
 
-      topics.on("child_added", onChildAddedHandler);
+      if (topicID) {
+        topics.orderByKey().equalTo(topicID)
+          .on("child_added", createOnChildAddedHandler(setFetchedTopic));
+      };
     },
 
     fetchParticipants: function() {
