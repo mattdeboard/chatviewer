@@ -87,7 +87,22 @@ const App = React.createClass({
   },
 
   handleTopicChange: function() {
-    this.setState({topics: TopicStore.getAll(), fullRetrievalComplete: true});
+    // HACK: This is in place for the sake of `clearSearch` and how it invokes
+    // the emission of the "change" event from TopicStore. I think the right way
+    // to do this would be routing, and let the browser (via the URL bar) keep
+    // track of the application state instead of gathering it by implication.
+    if (this.getParams().topicID) {
+      var state = {
+        topics: TopicStore.getFetchedTopic(),
+        fullRetrievalComplete: this.state.fullRetrievalComplete
+      };
+    } else {
+      var state = {
+        topics: TopicStore.getAll(),
+        fullRetrievalComplete: true
+      };
+    };
+    this.setState(state);
   },
 
   handleSearchResults: function() {
