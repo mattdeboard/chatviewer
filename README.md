@@ -35,13 +35,13 @@ Notes on implementation
 Resources
 =========
 
-All data is accessible via Firebase at https://interview-bolster.firebaseio.com/ 
+All data is accessible via Firebase at https://redacted.firebaseio.com/ 
 
 We've enabled anonymous access.
 
 Documentation for the Firebase libraries is available at https://www.firebase.com/docs/web/
 
-Please DO NOT use this endpoint in your final submission, but you can see the full JSON dump here: https://interview-bolster.firebaseio.com/.json
+Please DO NOT use this endpoint in your final submission, but you can see the full JSON dump here: https://redacted.firebaseio.com/.json
 
 The schema of the data is as follows:
 
